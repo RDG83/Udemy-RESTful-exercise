@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const methodOverride = require("method-override");
 
 mongoose.connect("mongodb://localhost/rest_blog", {
   useNewUrlParser: true,
@@ -10,6 +11,7 @@ mongoose.connect("mongodb://localhost/rest_blog", {
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(methodOverride("_method"));
 
 var blogSchema = new mongoose.Schema({
   title: String,
@@ -72,6 +74,29 @@ app.get("/blogs/:id/edit", function(req, res) {
 });
 
 // UPDATE ROUTE
+app.put("/blogs/:id", function(req, res) {
+  Blog.findByIdAndUpdate(req.params.id, req.body.blog, function(
+    err,
+    updatedBlog
+  ) {
+    if (err) {
+      res.redirect("/blogs");
+    } else {
+      res.redirect("/blogs/" + req.params.id);
+    }
+  });
+});
+
+// DESTROY ROUTE
+app.delete("/blogs/:id", function(req, res) {
+  Blog.findByIdAndDelete(req.params.id, function(err) {
+    if (err) {
+      res.redirect("/blogs");
+    } else {
+      res.redirect("/blogs");
+    }
+  });
+});
 
 app.get("*", function(req, res) {
   res.send("You entered a wrong path, please return to the home page!");
