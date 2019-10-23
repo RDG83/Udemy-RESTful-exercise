@@ -9,3 +9,7 @@ i.icon {
 body {
   background: whitesmoke;
 }
+
+#delete {
+  display: inline;
+}
